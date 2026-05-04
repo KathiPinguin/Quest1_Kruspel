@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -26,8 +27,11 @@ public class PlayerMovement : MonoBehaviour
     // Variablen für den Input
     private float horizontalInput;
     private float verticalInput;
-    private bool jumpPressed;
+    public bool jumpPressed;
     //private MovingPlatform activePlatform; // Speichert die aktuelle Plattform
+
+    private InputAction movement;
+    private InputAction jump;
 
     void Start()
     {
@@ -36,10 +40,15 @@ public class PlayerMovement : MonoBehaviour
         //velocity.y = -2f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        this.movement = InputSystem.actions.FindAction("Move");
+        this.jump = InputSystem.actions.FindAction("Jump");
     }
 
+    
     void Update()
     {
+        /*
         // 1. Eingaben in Update abfragen (Verhindert das Verschlucken von Sprüngen)
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
@@ -48,7 +57,18 @@ public class PlayerMovement : MonoBehaviour
         {
             jumpPressed = true;
         }
+        */
+
+        //jumpPressed = jump.WasPressedThisFrame();
+        if (jump.WasPressedThisFrame())
+        {
+            jumpPressed = true;
+        }
+        horizontalInput = movement.ReadValue<Vector2>().x;
+        verticalInput = movement.ReadValue<Vector2>().y;
     }
+    
+    
     void FixedUpdate()
     {
         // 2. Bewegungsrichtung ausrichten
@@ -58,6 +78,8 @@ public class PlayerMovement : MonoBehaviour
         inputForwardDirection.y = 0.0f;
         inputRightDirection.Normalize();
         inputForwardDirection.Normalize();
+
+
 
         Vector3 moveDir = Vector3.zero;
         moveDir += inputRightDirection * horizontalInput;
@@ -88,12 +110,15 @@ public class PlayerMovement : MonoBehaviour
         this.characterMovement *= (1 - this.dampening);
 
         // 6. Springen
+       
         if (jumpPressed && controller.isGrounded)
         {
             this.velocity.y = Mathf.Sqrt(this.jumpHeight * -2f * this.gravity);
             jumpPressed = false; // Zurücksetzen nach dem Sprung
         }
-        jumpPressed = false; // Absichern für den Fall, dass der Input nicht sofort gelesen wird
+        isGrounded = controller.isGrounded;
+        
+        //jumpPressed = false; // Absichern für den Fall, dass der Input nicht sofort gelesen wird
 
         // 7. Plattformgeschwindigkeit
         this.GetPlatformVelocity();

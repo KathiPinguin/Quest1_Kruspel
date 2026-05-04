@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Events;
 
 public class Lever : MonoBehaviour
@@ -7,62 +8,65 @@ public class Lever : MonoBehaviour
     private bool on = false;
     private bool interpolating = false;
     private float currentInterpolationTime = 0.0f;
+    private InputAction interactAction;
     public bool playerInRange;
-
-    [Header("Einstellungen")]
-    [SerializeField] private float switchTime = 0.5f;
-    [SerializeField] private LayerMask layerMask;
-
-    [Header("Rotationseinstellungen (in Grad)")]
-    [SerializeField] private Vector3 rotationOn = new Vector3(0, 90, 0);
-    [SerializeField] private Vector3 rotationOff = new Vector3(0, -90, 0);
-
-    [Header("Zuweisungen")]
+    [SerializeField] private float switchTime;
+    [SerializeField] private Transform onPosition;
+    [SerializeField] private Transform offPosition;
     [SerializeField] private GameObject leverHandle;
 
-    [Header("Events")]
+    [SerializeField] private LayerMask layerMask;
+
     [SerializeField] private UnityEvent onLeverActivated;
     [SerializeField] private UnityEvent onLeverDeactivated;
 
+    private bool moveLever = false;
     void Start()
     {
-        // Start Methode bleibt leer, da Tastenabfrage in Update() stattfindet
+        this.interactAction = InputSystem.actions.FindAction("Interact");
     }
-
     IEnumerator InterpolateLeverCoroutine()
     {
         this.interpolating = true;
-        Quaternion startRotation = leverHandle.transform.localRotation;
-
-        // Berechne die Ziel-Rotation aus den Vektoren
-        Quaternion targetRotation = Quaternion.Euler(this.on ? this.rotationOn : this.rotationOff);
+        Vector3 startPosition, targetPosition;
+        Quaternion startRotation, targetRotation;
+        if (this.on)
+        {
+            startPosition = this.offPosition.position;
+            startRotation = this.offPosition.rotation;
+            targetPosition = this.onPosition.position;
+            targetRotation = this.onPosition.rotation;
+        }
+        else
+        {
+            startPosition = this.onPosition.position;
+            startRotation = this.onPosition.rotation;
+            targetPosition = this.offPosition.position;
+            targetRotation = this.offPosition.rotation;
+        }
 
         this.currentInterpolationTime = 0.0f;
         while (this.currentInterpolationTime < this.switchTime)
         {
             float percentage = this.currentInterpolationTime / this.switchTime;
-
-            // Weiche Drehung mittels Slerp
+            var currentPosition = Vector3.Lerp(startPosition, targetPosition, percentage);
             var currentRotation = Quaternion.Slerp(startRotation, targetRotation, percentage);
-            this.leverHandle.transform.localRotation = currentRotation;
-
+            this.leverHandle.transform.SetPositionAndRotation(currentPosition, currentRotation);
             yield return null;
             this.currentInterpolationTime += Time.deltaTime;
         }
-
-        this.leverHandle.transform.localRotation = targetRotation;
+        this.leverHandle.transform.SetPositionAndRotation(targetPosition, targetRotation);
         this.interpolating = false;
-        DoStuff();
+        doStuff();
     }
 
-    private void DoStuff()
+    private void doStuff()
     {
         if (this.on)
             onLeverActivated.Invoke();
         else
             onLeverDeactivated.Invoke();
     }
-
     void ToggleLever()
     {
         if (!playerInRange)
@@ -70,14 +74,24 @@ public class Lever : MonoBehaviour
 
         this.on = !this.on;
         this.StartCoroutine(this.InterpolateLeverCoroutine());
+
+
     }
 
-    void Update()
+    private void Update()
     {
-        // Wir nutzen "Fire1" (Standard: Linke Maustaste oder Gamepad A-Knopf) um keine Tasten im Code zu hardcodieren.
-        if (Input.GetButtonDown("Fire1") && playerInRange && !interpolating)
+        if (this.interactAction.WasPressedThisFrame() && !this.interpolating)
         {
-            ToggleLever();
+           moveLever = true;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (moveLever && !this.interpolating)
+        {
+            this.ToggleLever();
+            moveLever = false;
         }
     }
 
