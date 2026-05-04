@@ -2,19 +2,16 @@ using UnityEngine;
 
 public class RespawnTrigger : MonoBehaviour
 {
-    // Das Feld für den sicheren Punkt im Inspector
     [SerializeField] private Transform respawnPoint;
 
     private void OnTriggerEnter(Collider other)
     {
-        // Wir prüfen: Hat das Objekt den Tag "Player"?
         if (other.CompareTag("Player"))
         {
             CharacterController controller = other.GetComponent<CharacterController>();
 
             if (controller != null)
             {
-                // Wir rufen die Logik auf
                 ExecuteRespawn(controller);
             }
         }
@@ -22,21 +19,18 @@ public class RespawnTrigger : MonoBehaviour
 
     private void ExecuteRespawn(CharacterController controller)
     {
-        // 1. Controller kurz ausschalten
-        controller.enabled = false;
-
-        // 2. Teleport zum sicheren Punkt
+        // 1. Sichere Position zuweisen
         if (respawnPoint != null)
         {
+            // CharacterController kurz ausschalten, um Ruckler und Fehler zu vermeiden
+            controller.enabled = false;
             controller.transform.position = respawnPoint.position;
-            Debug.Log("Mage wurde zu " + respawnPoint.name + " teleportiert!");
+            controller.enabled = true;
+            Debug.Log("Respawn erfolgreich!");
         }
         else
         {
-            Debug.LogError("Kein RespawnPoint im Inspector zugewiesen!");
+            Debug.LogError("Kein Respawn-Punkt zugewiesen!");
         }
-
-        // 3. Controller wieder einschalten
-        controller.enabled = true;
     }
 }

@@ -35,23 +35,8 @@ public class MovingPlatform : MonoBehaviour
     }
 
     public Vector3 GetVelocity() => velocity;
-
-    // --- NEU: Damit der Spieler mitfährt ---
-    private void OnTriggerEnter(Collider other)
+    public void setActive(bool state)
     {
-        if (other.CompareTag("Player"))
-        {
-            // Macht den Spieler zum Kind der Plattform
-            other.transform.SetParent(transform);
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            // Löst die Verbindung wieder
-            other.transform.SetParent(null);
-        }
+        this.isActive = state;
     }
 }
