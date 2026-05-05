@@ -17,6 +17,11 @@ public class PlayerMovement : MonoBehaviour
     public Transform groundCheck;
     public float groundDistance = 0.4f;
     public LayerMask platformMask;
+    [Header("Staub Partikel")]
+    public ParticleSystem dustParticlesLeft;  // NEU: Für links
+    public ParticleSystem dustParticlesRight; // NEU: Für rechts
+    private ParticleSystem.EmissionModule dustEmissionLeft;
+    private ParticleSystem.EmissionModule dustEmissionRight;
 
     private Vector3 characterMovement;
     private Vector3 platformVelocity;
@@ -32,6 +37,8 @@ public class PlayerMovement : MonoBehaviour
 
     private InputAction movement;
     private InputAction jump;
+    private Animator animator;
+    public float characterMovementSpeed;
 
     void Start()
     {
@@ -43,6 +50,17 @@ public class PlayerMovement : MonoBehaviour
 
         this.movement = InputSystem.actions.FindAction("Move");
         this.jump = InputSystem.actions.FindAction("Jump");
+            animator = GetComponent<Animator>();
+        if (dustParticlesLeft != null)
+        {
+            dustEmissionLeft = dustParticlesLeft.emission;
+            dustEmissionLeft.enabled = true; // Zum Testen erst einmal auf true
+        }
+        if (dustParticlesRight != null)
+        {
+            dustEmissionRight = dustParticlesRight.emission;
+            dustEmissionRight.enabled = true;
+        }
     }
 
     
@@ -84,7 +102,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 moveDir = Vector3.zero;
         moveDir += inputRightDirection * horizontalInput;
         moveDir += inputForwardDirection * verticalInput;
-        moveDir.Normalize();
+        //moveDir.Normalize();
 
         // 3. Rotation des Charakters
         if (moveDir.sqrMagnitude > 0.1f)
@@ -109,6 +127,7 @@ public class PlayerMovement : MonoBehaviour
         this.characterMovement += moveDir * this.speed * Time.fixedDeltaTime;
         this.characterMovement *= (1 - this.dampening);
 
+
         // 6. Springen
        
         if (jumpPressed && controller.isGrounded)
@@ -128,6 +147,26 @@ public class PlayerMovement : MonoBehaviour
         combinedMovement += velocity * Time.fixedDeltaTime;
 
         controller.Move(combinedMovement);
+
+        // 9. Animationen
+        if (animator != null)
+        {
+            Vector2 movement = new Vector2(characterMovement.x, characterMovement.z);
+            characterMovementSpeed = movement.magnitude / Time.fixedDeltaTime;
+            animator.SetFloat("RunningSpeed", characterMovementSpeed);
+            animator.SetBool("isJumping", !controller.isGrounded);
+            animator.SetBool("isGrounded", controller.isGrounded);
+        }
+        // 10. Staub-Partikel aktivieren, wenn sich der Spieler bewegt und auf dem Boden ist
+        // Partikel-Steuerung für beide Füße
+        if (dustParticlesLeft != null && dustParticlesRight != null)
+        {
+            // Wenn der Charakter auf dem Boden ist und die Bewegung größer als Null ist
+            bool isMoving = controller.isGrounded && moveDir.sqrMagnitude > 0.1f;
+
+            dustEmissionLeft.enabled = isMoving;
+            dustEmissionRight.enabled = isMoving;
+        }
     }
 
     private void GetPlatformVelocity()
