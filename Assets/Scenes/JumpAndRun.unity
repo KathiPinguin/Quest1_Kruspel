@@ -6794,7 +6794,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0
@@ -11697,7 +11697,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0
@@ -23253,6 +23253,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: d8ed675c356258946b621ae94c0118e7, type: 3}
     - target: {fileID: -448201377211078114, guid: 8bd7ea6c4736f5a48a599c88d6af6702, type: 3}
+      propertyPath: sfxMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 00995b554c0469140b6e1929120e8d10, type: 2}
+    - target: {fileID: -448201377211078114, guid: 8bd7ea6c4736f5a48a599c88d6af6702, type: 3}
       propertyPath: waypoints.Array.size
       value: 3
       objectReference: {fileID: 0}
@@ -23348,7 +23352,7 @@ AudioSource:
   m_GameObject: {fileID: 853504636}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 03cd9a009ac8a5246b8ef93902387895, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 490ae43656389e74e8ce8df2389d6f9e, type: 3}
   m_PlayOnAwake: 1
@@ -29731,6 +29735,7 @@ MonoBehaviour:
   footstepClip: {fileID: 8300000, guid: d0e761b92fcd11940ad08bb5f78f14e6, type: 3}
   jumpClip: {fileID: 8300000, guid: 1c80644e091a9c14a96d40f5186382f9, type: 3}
   landClip: {fileID: 8300000, guid: 76af7ce362146c14481834c14e7f11eb, type: 3}
+  sfxMixerGroup: {fileID: 24300002, guid: 00995b554c0469140b6e1929120e8d10, type: 2}
 --- !u!4 &1108950852 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8350641071794297372, guid: 3d26229401ead09499cd034289cd42be, type: 3}
@@ -38135,6 +38140,10 @@ PrefabInstance:
       propertyPath: squashSound
       value: 
       objectReference: {fileID: 8300000, guid: d8ed675c356258946b621ae94c0118e7, type: 3}
+    - target: {fileID: -448201377211078114, guid: 8bd7ea6c4736f5a48a599c88d6af6702, type: 3}
+      propertyPath: sfxMixerGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: 00995b554c0469140b6e1929120e8d10, type: 2}
     - target: {fileID: -448201377211078114, guid: 8bd7ea6c4736f5a48a599c88d6af6702, type: 3}
       propertyPath: waitTimeAtWaypoint
       value: 0.2

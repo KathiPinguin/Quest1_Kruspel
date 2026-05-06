@@ -9,8 +9,8 @@ public class CharacterFootsteps : MonoBehaviour
     [SerializeField] private AudioClip jumpClip;
     [SerializeField] private AudioClip landClip;
 
-   // [Header("Audio Mixer")]
-   // [SerializeField] private AudioMixerGroup sfxMixerGroup;
+    [Header("Audio Mixer")]
+    [SerializeField] private AudioMixerGroup sfxMixerGroup;
 
     private CharacterController controller;
     private AudioSource audioSource;
@@ -32,7 +32,7 @@ public class CharacterFootsteps : MonoBehaviour
             audioSource = gameObject.AddComponent<AudioSource>();
         }
 
-        //audioSource.outputAudioMixerGroup = sfxMixerGroup;
+        audioSource.outputAudioMixerGroup = sfxMixerGroup;
         audioSource.loop = false;
 
         // Sprung-Aktion aus dem Input-System laden (wie in deinem Movement-Skript)
