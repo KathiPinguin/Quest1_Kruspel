@@ -8,11 +8,12 @@ public class RespawnTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            CharacterController controller = other.GetComponent<CharacterController>();
+            PlayerMovement playerMovement = other.GetComponent<PlayerMovement>();
 
-            if (controller != null)
+            if (playerMovement != null)
             {
-                ExecuteRespawn(controller);
+                //ExecuteRespawn(controller);
+                playerMovement.kill();
             }
         }
     }

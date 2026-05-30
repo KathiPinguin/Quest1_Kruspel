@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="Parent" style="flex-grow: 1; top: 70%; right: 27px; left: 24px; bottom: 0; position: absolute; height: 168px; background-image: url(&quot;project://database/Assets/UI%20Assets/buttonLong_brown.png?fileID=2800000&amp;guid=d66cb17f7b8ad3c4cb37cf6d159e4db5&amp;type=3#buttonLong_brown&quot;);">
+        <ui:Label text="teststststststststststststs" style="height: auto; position: relative; width: auto; top: 15%; left: 3%; flex-grow: 1; min-width: 3%; min-height: 5%; max-height: 55%; max-width: 93%; right: 3%; bottom: 15%; -unity-font-style: bold; font-size: 40px; white-space: normal; color: rgb(255, 255, 255); flex-wrap: wrap;"/>
+    </ui:VisualElement>
+</ui:UXML>

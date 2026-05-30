@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
@@ -12,7 +14,7 @@ public class CharacterFootsteps : MonoBehaviour
     [Header("Audio Mixer")]
     [SerializeField] private AudioMixerGroup sfxMixerGroup;
 
-    private CharacterController controller;
+    private PlayerMovement player;
     private AudioSource audioSource;
     private InputAction jumpAction; // Referenz auf die Sprung-Aktion
 
@@ -23,7 +25,7 @@ public class CharacterFootsteps : MonoBehaviour
 
     void Start()
     {
-        controller = GetComponent<CharacterController>();
+        player = GetComponent<PlayerMovement>();
 
         // Audio Source Komponente sicherstellen
         audioSource = GetComponent<AudioSource>();
@@ -42,12 +44,16 @@ public class CharacterFootsteps : MonoBehaviour
     void Update()
     {
         // 1. Footsteps Sound (Schleife oder zeitversetzte Abspielung bei Bewegung)
-        if (controller.isGrounded && controller.velocity.sqrMagnitude > 0.1f)
+        Vector3 actVelocity = player.controller.velocity;
+        actVelocity.y = 0; // Vertikale Geschwindigkeit ignorieren für die Fußschritte
+        
+        if (player.controller.isGrounded && actVelocity.sqrMagnitude > 0.1f)
         {
             if (Time.time >= nextStepTime)
             {
                 if (footstepClip != null)
                 {
+                    UnityEngine.Debug.Log("Playing footstep sound" + player.velocity.sqrMagnitude);
                     audioSource.PlayOneShot(footstepClip);
                 }
                 nextStepTime = Time.time + stepCooldown;
@@ -55,7 +61,7 @@ public class CharacterFootsteps : MonoBehaviour
         }
 
         // 2. Aktiven Sprung erkennen
-        if (controller.isGrounded && jumpAction.WasPressedThisFrame())
+        if (player.controller.isGrounded && jumpAction.WasPressedThisFrame())
         {
             hasJumped = true;
             if (jumpClip != null)
@@ -65,13 +71,13 @@ public class CharacterFootsteps : MonoBehaviour
         }
 
         // Abgleich des Grounded-Status
-        if (!controller.isGrounded)
+        if (!player.controller.isGrounded)
         {
             wasGrounded = false;
         }
 
         // 3. Lande-Sound (nur abspielen wenn Boden berührt wird und gesprungen wurde
-        if (controller.isGrounded && !wasGrounded)
+        if (player.controller.isGrounded && !wasGrounded)
         {
             if (hasJumped) 
             {
@@ -83,5 +89,12 @@ public class CharacterFootsteps : MonoBehaviour
             }
             wasGrounded = true;
         }
+    }
+
+    public void stopAll()
+    {
+        UnityEngine.Debug.Log("Stopping all sounds");
+        audioSource.Stop();
+        
     }
 }

@@ -1,5 +1,11 @@
+using PlasticPipe.PlasticProtocol.Messages;
+using System;
+using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.InputSystem;
+using UnityEngine.WSA;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -26,7 +32,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 characterMovement;
     private Vector3 platformVelocity;
     private Vector3 characterGravity;
-    private Vector3 velocity;
+    public Vector3 velocity;
 
     public bool isGrounded;
     // Variablen für den Input
@@ -40,17 +46,44 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator;
     public float characterMovementSpeed;
 
+    [SerializeField] private Transform respawnPosition;
+
+    
+    bool stopMoving = false;
+    public bool StopMoving { get => stopMoving; set => stopMoving = value; }
+
+
+
+
+    [SerializeField] private float maxHealth = 100.0f;
+    private float currentHealth;
+
+    
+    public float GetCurrentHealth() => this.currentHealth;
+    public float GetmaxHealth() => this.maxHealth;
+
+    public void InflictDamage(float amount)
+    {
+        this.currentHealth -= amount;
+        this.currentHealth = Mathf.Clamp(this.currentHealth, 0.0f, this.maxHealth);
+    }
+
+    public void kill()
+    {
+        this.currentHealth = 0.0f;
+    }
     void Start()
     {
+        this.currentHealth = this.maxHealth;
         if (controller == null) controller = GetComponent<CharacterController>();
         if (cam == null && Camera.main != null) cam = Camera.main.transform;
         //velocity.y = -2f;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        
 
         this.movement = InputSystem.actions.FindAction("Move");
         this.jump = InputSystem.actions.FindAction("Jump");
-            animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
+
         if (dustParticlesLeft != null)
         {
             dustEmissionLeft = dustParticlesLeft.emission;
@@ -61,9 +94,13 @@ public class PlayerMovement : MonoBehaviour
             dustEmissionRight = dustParticlesRight.emission;
             dustEmissionRight.enabled = true;
         }
+        
     }
-
     
+
+
+
+
     void Update()
     {
         /*
@@ -85,10 +122,31 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = movement.ReadValue<Vector2>().x;
         verticalInput = movement.ReadValue<Vector2>().y;
     }
+
+    
+    public void stopPlayer()
+    {
+        stopMoving = true;
+        velocity = Vector3.zero;
+        controller.Move(velocity);
+
+        animator.SetFloat("RunningSpeed", 0);
+        //audioSource.Stop();
+        //jumpAudioSource.Stop();
+
+        CharacterFootsteps characterSound = GetComponent<CharacterFootsteps>();
+        characterSound.stopAll();
+    }
     
     
     void FixedUpdate()
     {
+        if(currentHealth <= 0.0f || stopMoving)
+        {
+            velocity = Vector3.zero;
+            return;
+        }
+
         // 2. Bewegungsrichtung ausrichten
         Vector3 inputRightDirection = cam.right;
         Vector3 inputForwardDirection = cam.forward;
@@ -96,8 +154,6 @@ public class PlayerMovement : MonoBehaviour
         inputForwardDirection.y = 0.0f;
         inputRightDirection.Normalize();
         inputForwardDirection.Normalize();
-
-
 
         Vector3 moveDir = Vector3.zero;
         moveDir += inputRightDirection * horizontalInput;
@@ -186,5 +242,18 @@ public class PlayerMovement : MonoBehaviour
         }
         this.platformVelocity = Vector3.zero;
     }
+
+    public void Respawn()
+    {
+        // Implement respawn logic here
+        controller.enabled = false;
+        this.currentHealth = this.maxHealth; // Gesundheit wiederherstellen
+        controller.transform.position = respawnPosition.position;
+        controller.enabled = true;
+        UIManager.Instance.lockMouse();
+        StartCoroutine(UIManager.Instance.FadeOutGameOver());
+        UIManager.Instance.looseCoin();
+    }
+
 
 }

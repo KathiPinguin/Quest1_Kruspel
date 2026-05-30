@@ -63,6 +63,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8989e8b9b6d1ea940b3256d5a20ee6df, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3094964012872473483}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8989e8b9b6d1ea940b3256d5a20ee6df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5486909099804918446}
   m_SourcePrefab: {fileID: 100100000, guid: 8989e8b9b6d1ea940b3256d5a20ee6df, type: 3}
 --- !u!1 &788893794562336148 stripped
 GameObject:
@@ -84,10 +87,25 @@ MeshCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5968381573125200654, guid: 8989e8b9b6d1ea940b3256d5a20ee6df, type: 3}
+--- !u!114 &5486909099804918446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788893794562336148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7abcdd767bcb6247899c1cc389755e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinHandler
+  rotationSpeed: 90
+  collectSound: {fileID: 8300000, guid: bc3962a466801344d87ebc72d82c0396, type: 3}
+  sfxGroup: {fileID: 24300002, guid: 00995b554c0469140b6e1929120e8d10, type: 2}

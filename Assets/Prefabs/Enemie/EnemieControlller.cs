@@ -11,6 +11,7 @@ public class EnemieControlller : MonoBehaviour
     [SerializeField] private float rotationSpeed = 5f;
     [SerializeField] private float waitTimeAtWaypoint = 2f;
     [SerializeField] private List<Transform> waypoints;
+
     private int currentWaypointIndex = 0;
     private bool isWaiting = false;
     private bool isSquashing;
@@ -20,9 +21,11 @@ public class EnemieControlller : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioClip squashSound;
     [SerializeField] private AudioMixerGroup sfxMixerGroup;
+
+
     void Start()
     {
-        
+     
     }
     void FixedUpdate()
     {
@@ -115,6 +118,7 @@ public class EnemieControlller : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.5f); // Kurze Pause bevor der Gegner verschwindet
         //Delete oder Deaktivieren des Gegners hier
         Destroy(this.gameObject);
+        UIManager.Instance.CollectCoin(); // Beispiel: Spieler erhält eine Belohnung für das Besiegen des Gegners
 
      
     }
